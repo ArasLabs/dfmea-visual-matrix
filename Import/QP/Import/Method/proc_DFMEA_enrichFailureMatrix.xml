@@ -1,0 +1,183 @@
+<AML>
+ <Item type="Method" id="F7D7DFA2B3704599AE33509CF42A17FA" action="add">
+  <classification>/*</classification>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[var fmIstemp = document.thisItem.getAttribute("isTemp");
+
+if (fmIstemp != "1" && document.getElementById("FM_51")) {
+
+	// note: building the below query is necessary (instead of just using the document.thisItem context)
+	// because this context is cached, meaning the form wouldn't update when scenario relationships change
+	var dfmeaId = document.thisItem.getAttribute("id");
+	var itm0 = document.thisItem.newItem("DFMEA", "get");
+	var itm1 = document.thisItem.newItem("DFMEA DFMEA Item", "get");
+	var itm2 = document.thisItem.newItem("DFMEA Item", "get");
+	var itm3 = document.thisItem.newItem("DFMEA Item DFMEA Function", "get");
+	var itm4 = document.thisItem.newItem("DFMEA Function", "get");
+	var itm5 = document.thisItem.newItem("DFMEA Function Characteristic", "get");
+	var itm6 = document.thisItem.newItem("Char FMEA Failure Mode", "get");
+	var itm7 = document.thisItem.newItem("FMEA Failure Mode", "get");
+	var itm8 = document.thisItem.newItem("FMEA Failure Mode FMEA Cause", "get");
+	var itm8p = document.thisItem.newItem("FMEA Failure Mode FMEA Effect", "get");
+	var itm9 = document.thisItem.newItem("FMEA Cause", "get");
+	var itm10 = document.thisItem.newItem("FMEA Cause FMEA Control", "get");
+	var itm11 = document.thisItem.newItem("FMEA Control", "get");
+	var itm12 = document.thisItem.newItem("FMEA Control FMEA Action", "get");
+	
+	
+	itm0.setAttribute("id", dfmeaId);
+	itm0.setAttribute('select','id');
+	itm1.setAttribute('select','id, related_id');
+	itm2.setAttribute('select','id');
+	itm3.setAttribute('select','id, related_id');
+	itm4.setAttribute('select','id');
+	itm5.setAttribute('select','id, related_id');
+	itm6.setAttribute('select','id, related_id');
+	itm7.setAttribute('select','id');
+	itm8.setAttribute('select','id, related_id');
+	itm8.setAttribute('type','FMEA Failure Mode FMEA Cause');
+	itm8p.setAttribute('select','id, related_id(severity)');
+	itm8p.setAttribute('type','FMEA Failure Mode FMEA Effect');
+	itm9.setAttribute('select','occurrence');
+	itm10.setAttribute('select','id, related_id');
+	itm11.setAttribute('select','rpn, detection');
+	itm12.setAttribute('select','id, related_id(severity, occurrence, detection, rpn)');
+	
+	itm11.addRelationship(itm12);
+	itm10.setRelatedItem(itm11);
+	itm9.addRelationship(itm10);
+	itm8.setRelatedItem(itm9);
+	itm7.addRelationship(itm8);
+	itm7.addRelationship(itm8p);
+	itm6.setRelatedItem(itm7);
+	itm5.addRelationship(itm6);
+	itm4.addRelationship(itm5);
+	itm3.setRelatedItem(itm4);
+	itm2.addRelationship(itm3);
+	itm1.setRelatedItem(itm2);
+	itm0.addRelationship(itm1);
+	
+	var res = itm0.apply();
+	
+	// first remove the failure modes already added to the table (useless when opening a fresh DFMEA, but needed when a refresh is fired)
+    var fms = getElementsByClass("fm");
+    var fmcs = getElementsByClass("fmCorrected");
+    var fmToDelete = fms.concat(fmcs);
+	for (var i=0; i<fmToDelete.length; i++) {
+	    var currentFm = fmToDelete[i];
+	    currentFm.parentNode.removeChild(currentFm);
+	}
+	
+    // we work on the most granular item that interests us(where Detection is)
+	var controls = res.getItemsByXPath("//Item[@type='FMEA Control']");
+	for (var i=0; i<controls.getItemCount(); i++) {
+	    var thisControl = controls.getItemByIndex(i);
+	    var det = thisControl.getProperty("detection");
+	    
+    	// go up to where Occurence is
+	    var parentCause = thisControl.getItemsByXPath("ancestor::Item[@type='FMEA Cause']").getItemByIndex(0);
+	    var occ = parentCause.getProperty("occurrence");
+    	
+        // determine the worst Severity among all the "FMEA Failure Mode FMEA Effect"s
+	    var parentFmeafms = parentCause.getItemsByXPath("ancestor::Item[@type='FMEA Failure Mode']").getItemByIndex(0);
+	    var effects = parentFmeafms.getItemsByXPath("descendant::Item[@type='FMEA Effect']")
+        var sev = 0;
+        for (var j=0; j<effects.getItemCount(); j++) {
+            var localSeverity = effects.getItemByIndex(j).getProperty("severity");
+            if (localSeverity > sev) sev = localSeverity;
+        }
+        
+        // add the actions to the html
+        var actionFullyDefined = false;
+        var actions = thisControl.getItemsByXPath("descendant::Item[@type='FMEA Action']");
+        if (actions.getItemCount()>0) {
+            for (var k=0; k<actions.getItemCount(); k++) {
+                var actSev = actions.getItemByIndex(k).getProperty("severity");
+                var actOcc = actions.getItemByIndex(k).getProperty("occurrence");
+                var actDet = actions.getItemByIndex(k).getProperty("detection");
+                if (actSev && actOcc && actDet) actionFullyDefined = true;
+                
+                if(actDet) {
+                    // the action we insert must be visible or not depending on whether table is in a before/after state
+                    var actVisibility = document.getElementById("fmState").innerHTML=="Before Action" ? 'display:none;' : 'display:inline;';
+                    // get the fm index to know the FM_** id, then add our HTML bits
+                    var tableFmIndex = getFmIndexString(actOcc, actSev);
+                    if (!tableFmIndex.match("0")) {
+                        var fontSize = 70 + 13*actDet + '%;';
+                        var updatedInnerHTML = '<span class="fmCorrected" style="font-size: '+ fontSize + actVisibility +'">' + actDet + '<br /></span>';
+                        document.getElementById(tableFmIndex).innerHTML += updatedInnerHTML;
+                    }
+                }
+            }
+        }
+	    
+	    // add the effects to the html
+        if(det) {
+            // get the fm index to know the FM_** id, then add our HTML bits
+            var tableFmIndex = getFmIndexString(occ, sev);
+            if (!tableFmIndex.match("0")) {
+                // the effect we insert must be visible or not depending on whether table is in a before/after state
+                var effVisibility = document.getElementById("fmState").innerHTML=="Before Action" ? 'display:inline;' : 'display:none;';
+	            var associatedAction = (actionFullyDefined) ? " associatedAction" : " noAssociatedAction";
+                var fontSize = 70 + 13*det + '%;';
+                var updatedInnerHTML = '<span class="fm' + associatedAction + '" style="font-size: '+ fontSize + effVisibility + '">' + det + '<br /></span>';
+                document.getElementById(tableFmIndex).innerHTML += updatedInnerHTML;
+            }
+        }
+    }
+}
+
+return this;
+
+function getFmIndexString(proba, sever) {
+    var fmIndex = "FM_";
+    
+    if (proba>8) {fmIndex += "5";}
+    else if (proba>6) {fmIndex += "4";}
+    else if (proba>4) {fmIndex += "3";}
+    else if (proba>2) {fmIndex += "2";}
+    else if (proba>0) {fmIndex += "1";}
+    else {fmIndex += "0";}
+    
+    if (sever>8) {fmIndex += "1";}
+    else if (sever>6) {fmIndex += "2";}
+    else if (sever>4) {fmIndex += "3";}
+    else if (sever>2) {fmIndex += "4";}
+    else if (sever>0) {fmIndex += "5";}
+    else {fmIndex += "0";}
+    
+    return fmIndex;
+}
+
+function getElementsByClass(searchClass,node,tag) {
+	var classElements = new Array();
+	if ( node == null )
+		node = document;
+	if ( tag == null )
+		tag = '*';
+	var els = node.getElementsByTagName(tag);
+	var elsLen = els.length;
+	var pattern = new RegExp("(^|\\s)"+searchClass+"(\\s|$)");
+	for (i = 0, j = 0; i < elsLen; i++) {
+		if ( pattern.test(els[i].className) ) {
+			classElements[j] = els[i];
+			j++;
+		}
+	}
+	return classElements;
+}
+
+function toggle_visibility(cls1, cls2) {
+    var c1 = getElementsByClass(cls1);
+    for (var i=0;i<c1.length;i++) {
+        c1[i].style.display = (c1[i].style.display != 'none') ? 'none' : 'inline';
+    }
+    var c2 = getElementsByClass(cls2);
+    for (var i=0;i<c2.length;i++) {
+        c2[i].style.display = (c2[i].style.display != 'none') ? 'none' : 'inline';
+    }
+}]]></method_code>
+  <method_type>JavaScript</method_type>
+  <name>proc_DFMEA_enrichFailureMatrix</name>
+ </Item>
+</AML>

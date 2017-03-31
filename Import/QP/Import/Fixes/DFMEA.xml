@@ -1,0 +1,271 @@
+<AML>
+ <Item type="Form" id="8A4C7AA7640E4419A6B7D4317831A4B3" action="edit">
+  <height>400</height>
+  <width>1024</width>
+  <Relationships>
+   <Item type="Body" id="B95207DFC44C48409297F69DBFEEBB22" action="edit">
+    <Relationships>
+     <Item type="Field" id="EDCCAED8A2E04ED38322CD93AF6D40C6" action="edit">
+      <display_length>20</display_length>
+      <y>50</y>
+     </Item>
+     <Item type="Field" id="8470DA98F2E34CF89D40C164B2C3CD1A" action="edit">
+      <x>190</x>
+      <y>170</y>
+     </Item>
+     <Item type="Field" id="BD7ED39A032D4DE08EA16623436C6669" action="add">
+      <border_width>0</border_width>
+      <classification>/*</classification>
+      <css>{$this field rule}
+{
+cursor: pointer;
+text-align:center;
+vertical-align:middle;
+/*color:#009030;*/
+}
+{$this field rule} .legend
+{
+width:60px;
+color:#000000 !important;
+}
+{$this field rule} .red
+{
+background-color:#FF6467;
+color:white;
+}
+{$this field rule} .yellow
+{
+background-color:#FFFF5F;
+color:black;
+}
+{$this field rule} .orange
+{
+background-color:#FFBF43;
+color:black;
+}
+{$this field rule} .green
+{
+background-color:#A5FFA5;
+color:black;
+}
+{$this field rule} .select
+{
+background-color:black;
+color:red;
+}
+{$this field rule} .fm
+{
+/*font-weight:bold;*/
+}
+{$this field rule} .fmCorrected
+{
+/*font-weight:bold;*/
+font-style:italic;
+}
+{$this field rule} .noAssociatedAction
+{
+font-weight:bold;
+/*text-decoration: underline;*/
+}
+{$this field rule} .associatedAction
+{
+color:#444444;
+font-style:italic;
+}
+{$this field rule} .fmHeader
+{
+color:#444444;
+display:block;
+clear: both;
+}
+{$this field rule} .fmColumnLeft
+{
+width:200px;
+padding:5px;
+text-align:center;
+float:right;
+display:block;
+white-space: normal;
+}
+{$this field rule} .fmColumnRight
+{
+font-size:16px;
+width:120px;
+padding:5px;
+text-align:center;
+float:right;
+display:block;
+white-space: normal;
+}
+{$this field rule} #fmState
+{
+font-weight:bold;
+}</css>
+      <field_type>html</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <html_code><![CDATA[<script type="text/javascript">
+function getElementsByClass(searchClass,node,tag) {
+	var classElements = new Array();
+	if ( node == null )
+		node = document;
+	if ( tag == null )
+		tag = '*';
+	var els = node.getElementsByTagName(tag);
+	var elsLen = els.length;
+	var pattern = new RegExp("(^|\\s)"+searchClass+"(\\s|$)");
+	for (i = 0, j = 0; i < elsLen; i++) {
+		if ( pattern.test(els[i].className) ) {
+			classElements[j] = els[i];
+			j++;
+		}
+	}
+	return classElements;
+}
+
+function toggle_visibility(cls1, cls2) {
+    var c1 = getElementsByClass(cls1);
+    for (var i=0;i<c1.length;i++) {
+        c1[i].style.display = (c1[i].style.display != 'none') ? 'none' : 'inline';
+    }
+    var c2 = getElementsByClass(cls2);
+    for (var i=0;i<c2.length;i++) {
+        c2[i].style.display = (c2[i].style.display != 'none') ? 'none' : 'inline';
+    }
+    if (document.getElementById("fmState").innerHTML=="Before Action") document.getElementById("fmState").innerHTML="After Action";
+		else document.getElementById("fmState").innerHTML="Before Action";
+}
+</script>
+<div onclick="toggle_visibility('fm', 'fmCorrected');">
+	<div class="fmHeader">
+		<div class="fmColumnLeft">Click to toggle before/after action.<br />Legend: <span class="noAssociatedAction">need action</span>, <span class="associatedAction">reviewed</span></div>
+		<div class="fmColumnRight" id="fmState">Before Action</div>
+	</div>
+	<div>
+		<table cellspacing="1px">
+			<tr height="40px">
+				<td class="legend">Frequent</td>
+				<td id="FM_55" class="value yellow">&#160;</td>
+				<td id="FM_54" class="value orange">&#160;</td>
+				<td id="FM_53" class="value orange">&#160;</td>
+				<td id="FM_52" class="value red">&#160;</td>
+				<td id="FM_51" class="value red">&#160;</td>
+			</tr>
+			<tr height="40px">
+				<td class="legend"  width="60px">Probable</td>
+				<td id="FM_45" class="value yellow">&#160;</td>
+				<td id="FM_44" class="value yellow">&#160;</td>
+				<td id="FM_43" class="value orange">&#160;</td>
+				<td id="FM_42" class="value orange">&#160;</td>
+				<td id="FM_41" class="value red">&#160;</td>
+			</tr>
+			<tr height="40px">
+				<td class="legend">Occasional</td>
+				<td id="FM_35" class="value green">&#160;</td>
+				<td id="FM_34" class="value yellow">&#160;</td>
+				<td id="FM_33" class="value yellow">&#160;</td>
+				<td id="FM_32" class="value orange">&#160;</td>
+				<td id="FM_31" class="value orange">&#160;</td>
+			</tr>
+			<tr height="40px">
+				<td class="legend">Remote</td>
+				<td id="FM_25" class="value green">&#160;</td>
+				<td id="FM_24" class="value green">&#160;</td>
+				<td id="FM_23" class="value yellow">&#160;</td>
+				<td id="FM_22" class="value yellow">&#160;</td>
+				<td id="FM_21" class="value orange">&#160;</td>
+			</tr>
+			<tr height="40px">
+				<td class="legend">Improbable</td>
+				<td id="FM_15" class="value green">&#160;</td>
+				<td id="FM_14" class="value green">&#160;</td>
+				<td id="FM_13" class="value green">&#160;</td>
+				<td id="FM_12" class="value yellow">&#160;</td>
+				<td id="FM_11" class="value yellow">&#160;</td>
+			</tr>
+			<tr>
+				<td class="legend"></td>
+				<td class="legend">Negligible</td>
+				<td class="legend">Minor</td>
+				<td class="legend">Major</td>
+				<td class="legend">Severe</td>
+				<td class="legend">Catastrophic</td>
+			</tr>
+		</table>
+	</div>
+</div>]]></html_code>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <name>proc_fm_matrix</name>
+      <sort_order>2688</sort_order>
+      <source_id keyed_name="B95207DFC44C48409297F69DBFEEBB22" type="Body">B95207DFC44C48409297F69DBFEEBB22</source_id>
+      <tab_stop>1</tab_stop>
+      <x>590</x>
+      <y>10</y>
+     </Item>
+     <Item type="Field" id="D5CFAED69B524C69BBAD42A37FD35D78" action="edit">
+      <display_length>20</display_length>
+      <x>460</x>
+      <y>50</y>
+     </Item>
+     <Item type="Field" id="32C5BC7D380B4E78AA7FD9387F8B3253" action="edit">
+      <x>380</x>
+      <y>140</y>
+     </Item>
+     <Item type="Field" id="12D0FEABA5534472A2DAE775DC0DBF91" action="edit">
+      <display_length>34</display_length>
+      <y>10</y>
+     </Item>
+     <Item type="Field" id="5B2B85CD0DBA42459BF584C96513C6D9" action="edit">
+      <html_code><![CDATA[<img src="../cbin/icons/1x1.gif" width=175 height=70>
+]]></html_code>
+      <x>365</x>
+      <y>130</y>
+     </Item>
+     <Item type="Field" id="AAEA26983A774E4A9DA5FB8552F45CCB" action="edit">
+      <x>400</x>
+      <y>10</y>
+     </Item>
+     <Item type="Field" id="2933E6C466214D878FB7FAF7699534A8" action="edit">
+      <x>370</x>
+      <y>90</y>
+     </Item>
+     <Item type="Field" id="0726077FDF194AA0A1D14D8D6F922ADB" action="edit">
+      <display_length>20</display_length>
+      <x>330</x>
+      <y>50</y>
+     </Item>
+     <Item type="Field" id="345BEF2E742642528E9E643DA38D0851" action="edit">
+      <display_length>22</display_length>
+      <y>90</y>
+     </Item>
+     <Item type="Field" id="10282AA2C7384D509823373757CC2644" action="edit">
+      <display_length>22</display_length>
+      <y>130</y>
+     </Item>
+     <Item type="Field" id="108ABA2069844B96A289DFFE30D52718" action="edit">
+      <display_length>20</display_length>
+      <x>460</x>
+      <y>10</y>
+     </Item>
+    </Relationships>
+   </Item>
+  
+   <Item type="Form Event" id="34B144D56F5F4F0C88739B019C0677E1" action="add">
+    <classification>/*</classification>
+    <form_event>onformpopulated</form_event>
+    <related_id keyed_name="proc_DFMEA_enrichFailureMatrix" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>proc_DFMEA_enrichFailureMatrix</name>
+     </Item>
+    </related_id>
+    <sort_order>256</sort_order>
+    <source_id keyed_name="DFMEA" type="Form">8A4C7AA7640E4419A6B7D4317831A4B3</source_id>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>
