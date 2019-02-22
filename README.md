@@ -1,3 +1,8 @@
+>## Archived Aras Community Project
+*This project has been migrated to GitHub from the old Aras Projects page (http://www.aras.com/projects). As an Archived project, this project is no longer being actively developed or maintained.*
+
+>*For current projects, please visit the new Aras Community Projects page on the updated Aras Community site: http://community.aras.com/projects*
+
 # DFMEA Visual Matrix
 
 This add-on adds a colored matrix to the DFMEA form, allowing visual representation of the severity/occurrence/detectability of a DFMEA:
